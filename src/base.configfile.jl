@@ -26,12 +26,16 @@ Updates and returns the module's current config.
 """
 function load_config(;
         base::AbstractString = pwd(),
-        names::Vector = CONFIG_FILE_NAMES
+        names::Vector = CONFIG_FILE_NAMES, 
+        log = true
     )
+    
     _cfg = Dict{String,Any}()
+    _found = false
     for name in names
         path = joinpath(base, name)
         isfile(path) || continue
+        _found = true
         _raw = _read_json_with_comments(path)
         for (k, v) in _raw
             _cfg[string(k)] = v
@@ -40,6 +44,11 @@ function load_config(;
         # Meta
         _cfg["__config.name"] = name
     end
+
+    if log && !_found
+        @warn "Configuration file not found." base=base action="Using empty default configuration."
+    end
+
     
     # Meta
     _cfg["__config.base"] = base

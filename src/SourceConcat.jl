@@ -12,6 +12,7 @@ include("base.concat.jl")
 include("base.concat.lines.jl")
 include("base.configfile.jl")
 include("utils.clipboard.file.jl")
+include("utils.config.validate.jl")
 include("utils.jl")
 include("utils.lang.map.jl")
 

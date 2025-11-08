@@ -10,18 +10,16 @@
 
 ## ✨ Overview
 
-**SourceConcat.jl** is a small Julia utility that walks your source tree, collects files matching configurable patterns, and concatenates them into a single Markdown file.
+**SourceConcat.jl** walks your source tree, collects files that match glob patterns, and concatenates them into a single Markdown file.
 
-It’s ideal for:
-- Preparing *context packs* for AI tools or documentation.
-- Creating portable snapshots of your codebase.
-- Rapid project summaries and shareable archives.
+It’s handy for:
+- Building *context packs* for AI tools or documentation
+- Creating portable snapshots of a codebase
+- Rapid code reviews and shareable archives
 
 ---
 
 ## ⚙️ Installation
-
-You can install it directly in Julia:
 
 ```julia
 using Pkg
@@ -30,30 +28,28 @@ Pkg.add(url="https://github.com/josePereiro/SourceConcat.jl.git")
 
 ---
 
-## 🚀 Usage
+## 🚀 Quick start
 
-1. Create a configuration file named `SourceConcat.json` in your project root.
-2. Call `SourceConcat.concat()` from Julia.
-
-Example:
+1. Put a configuration file at your project root named **`SourceConcat.json`** *(or `SrcConcat.json`)*.
+2. From Julia, call:
 
 ```julia
 using SourceConcat
-
 concat(verbose = true)
 ```
 
 ### Output modes
 
-| Mode               | Description                                                                    |
-| ------------------ | ------------------------------------------------------------------------------ |
-| `"file"`           | Write concatenated Markdown to `output.path`.                                  |
-| `"clipboard-text"` | Copy concatenated text directly to the clipboard.                              |
-| `"clipboard-file"` | Copy a *file reference* to the clipboard (Finder/Explorer/Nautilus pasteable). |
+| Mode               | Description                                                              |
+| ------------------ | ------------------------------------------------------------------------ |
+| `"file"`           | Write concatenated Markdown to `output.path`.                            |
+| `"clipboard-text"` | Copy concatenated text to the clipboard (up to an internal size limit).  |
+| `"clipboard-file"` | Write the file to disk **and** copy a *file reference* to the clipboard. |
+| `"terminal"`       | Print the concatenated Markdown to stdout.                               |
 
 ---
 
-## 🧩 Example Configuration
+## 🧩 Example configuration
 
 ```jsonc
 {
@@ -77,70 +73,91 @@ concat(verbose = true)
 
 ### Main keys
 
-| Key             | Type             | Description                                         |
-| --------------- | ---------------- | --------------------------------------------------- |
-| `root.paths`    | `Vector{String}` | Root directories to walk through                    |
-| `output.path`   | `String`         | Path for the output file                            |
-| `output.mode`   | `String`         | `"file"`, `"clipboard-text"`, or `"clipboard-file"` |
-| `include.files` | `Vector{String}` | Glob patterns to include                            |
-| `exclude.files` | `Vector{String}` | Glob patterns to exclude                            |
-| `use.gtignore`  | `Bool`           | Whether to respect `.gitignore` (future feature)    |
+| Key             | Type             | Description                                                            |
+| --------------- | ---------------- | ---------------------------------------------------------------------- |
+| `root.paths`    | `Vector{String}` | Root directories to walk                                               |
+| `output.path`   | `String`         | Destination Markdown path                                              |
+| `output.mode`   | `String`         | One of: `"file"`, `"clipboard-text"`, `"clipboard-file"`, `"terminal"` |
+| `include.files` | `Vector{String}` | Glob patterns to include                                               |
+| `exclude.files` | `Vector{String}` | Glob patterns to exclude                                               |
+| `use.gtignore`  | `Bool`           | Reserved for future `.gitignore` support                               |
+
+> **Config filenames:** either `SourceConcat.json` or `SrcConcat.json` is recognized.
 
 ---
 
-## 📋 Clipboard File Support
+## 🧠 Example output
 
-When `output.mode` is `"clipboard-file"`, the concatenated Markdown is written to disk and a **file reference** is copied to your clipboard — allowing you to paste the file directly into Finder (macOS), Explorer (Windows), or GNOME/Nautilus (Linux).
-
-### OS-specific backends
-
-| Platform    | Backend             | Details                                                             |
-| ----------- | ------------------- | ------------------------------------------------------------------- |
-| **macOS**   | `osascript`         | Uses AppleScript: `set the clipboard to POSIX file "..."`           |
-| **Windows** | `PowerShell`        | Uses `.NET` `System.Windows.Forms.Clipboard` via STA thread         |
-| **Linux**   | `wl-copy` / `xclip` | Writes a GNOME-compatible MIME type: `x-special/gnome-copied-files` |
-
-If neither `wl-copy` nor `xclip` is available, an error message will guide you.
-
-Implementation: [`src/utils.clipboard.file.jl`](src/utils.clipboard.file.jl)
-
----
-
-## 🧠 Example Output
-
-A generated Markdown file looks like:
-
-````markdown
+```markdown
 <!-- Generated by SourceConcat.jl at 2025-11-08 10:15:44 -->
 
 ***
 ## TABLE OF CONTENTS
-
 1. [Content of 'Project.toml'](#sc-1)
 2. [Content of 'src/SourceConcat.jl'](#sc-2)
 ...
+```
 
-***
-## 1 ⟦Project.toml⟧
-```toml
-name = "SourceConcat"
-...
-````
+---
 
-````
+## 🖥️ Shell alias / function (Bash)
+
+Add one of these to your `~/.bashrc` or `~/.zshrc`.
+
+### Minimal alias (runs in current directory)
+
+```bash
+alias srcconcat='julia -e "using SourceConcat; SourceConcat.concat()"'
+```
+
+Usage:
+
+```bash
+# From a repo that has SourceConcat.json
+srcconcat
+```
+
+### Small helper function
+
+```bash
+srcconcat() {
+    # global
+    julia -e 'using SourceConcat; SourceConcat.concat()'
+}
+```
+
+Examples:
+
+```bash
+# Use the active environment
+srcconcat
+```
+
+> The function simply invokes `SourceConcat.concat()` in the current working directory, where the tool will look for `SourceConcat.json`.
+---
+
+## 📋 Clipboard file support
+
+When `output.mode` is `"clipboard-file"`, the Markdown is written to disk and a **file reference** is copied to your clipboard, so you can paste directly into a AI chat as an attachment.
+
+| Platform    | Backend             | Details                                                                        |
+| ----------- | ------------------- | ------------------------------------------------------------------------------ |
+| **macOS**   | `osascript`         | AppleScript: `set the clipboard to POSIX file "..."`                           |
+| **Windows** | `PowerShell`        | Uses `.NET` `System.Windows.Forms.Clipboard` via STA thread                    |
+| **Linux**   | `wl-copy` / `xclip` | GNOME-compatible `x-special/gnome-copied-files`, falls back to `text/uri-list` |
+
+Implementation: `src/utils.clipboard.file.jl`
 
 ---
 
 ## 🧪 Development
 
-Run the tests:
-
 ```julia
 using Pkg
 Pkg.test("SourceConcat")
-````
+```
 
-Planned additions:
+Planned:
 
 * `.gitignore` integration
 * Parallel reading for large trees
@@ -149,7 +166,7 @@ Planned additions:
 
 ---
 
-## 🧱 Project Structure
+## 🧱 Project structure
 
 ```
 SourceConcat.jl/
@@ -169,12 +186,4 @@ SourceConcat.jl/
 
 ## 📄 License
 
-This project is licensed under the **MIT License**.
-© 2025 [José Pereiro](mailto:jose.pereiro.lab@gmail.com)
-
----
-
-### 💡 Tip
-
-Combine `SourceConcat` with a scheduled task or GitHub Action to automatically generate a snapshot of your source tree for documentation or LLM context ingestion.
-
+MIT © 2025 [José Pereiro](mailto:jose.pereiro.lab@gmail.com)

@@ -3,7 +3,7 @@ function concat(;
         verbose = false
     )
     
-    paths = collect_paths(;cfg, verbose = false)
+    paths = collect_paths(;cfg)
     
     lines = SourceConcat.concat_lines(paths)
     

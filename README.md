@@ -35,7 +35,7 @@ Pkg.add(url="https://github.com/josePereiro/SourceConcat.jl.git")
 
 ```julia
 using SourceConcat
-concat(verbose = true)
+concat(log = true)
 ```
 
 ### Output modes

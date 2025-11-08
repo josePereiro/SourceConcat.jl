@@ -1,0 +1,26 @@
+{
+    "root.paths": [
+        "."
+    ],  
+
+    "output.path": "~/Documents/context.md",
+
+    "output.mode": "clipboard-file",
+    
+    "include.files": [
+        "*.jl", 
+        "*.md",
+        "*Project.toml", 
+        "*SourceConcat.json" 
+    ], 
+    "exclude.files": [
+        "_DEPRECATED/**",
+        ".git/**",
+        "dev/**"
+    ], 
+    "include.content": [
+        ""
+    ], 
+
+    "use.gtignore": true
+}

@@ -18,7 +18,7 @@ function concat(;
         return
     elseif out_mode == "clipboard-file"
         base = get(cfg, "__config.base", pwd())
-        output_file = get(cfg, "output.path", "SourceConcat.md")
+        output_file = get(cfg, "output.path", "~/Documents/context.md")
         output_path = _canonicalize(output_file; base)
         write_output(output_path, lines; log)
         clipboard_file(output_path; log)

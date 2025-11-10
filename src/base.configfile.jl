@@ -31,6 +31,7 @@ function load_config(;
         # Meta
         _read_json_with_comments!(_cfg, path)
         _cfg["__config.name"] = name
+        _cfg["__config.path"] = path
     end
 
     if log && !_found

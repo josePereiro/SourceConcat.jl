@@ -67,7 +67,7 @@ concat(log = true)
     ".git/**",
     "dev/**"
   ],
-  "use.gtignore": true
+  "use.gitignore": true
 }
 ```
 
@@ -80,7 +80,7 @@ concat(log = true)
 | `output.mode`   | `String`         | One of: `"file"`, `"clipboard-text"`, `"clipboard-file"`, `"terminal"` |
 | `include.files` | `Vector{String}` | Glob patterns to include                                               |
 | `exclude.files` | `Vector{String}` | Glob patterns to exclude                                               |
-| `use.gtignore`  | `Bool`           | Reserved for future `.gitignore` support                               |
+| `use.gitignore` | `Bool`           | When `true`, patterns in `.gitignore` are respected for exclusion      |
 
 > **Config filenames:** either `SourceConcat.json` or `SrcConcat.json` is recognized.
 
@@ -159,7 +159,7 @@ Pkg.test("SourceConcat")
 
 Planned:
 
-* `.gitignore` integration
+* Nested `.gitignore` parsing and `!pattern` support
 * Parallel reading for large trees
 * Command-line interface
 * HTML / JSON export options
@@ -172,11 +172,14 @@ Planned:
 SourceConcat.jl/
 ├── Project.toml
 ├── SourceConcat.json          # example configuration
+├── data/
+│   └── SourceConfig.example.json
 ├── src/
 │   ├── SourceConcat.jl
 │   ├── base.*.jl
 │   ├── utils.clipboard.file.jl
-│   └── utils.lang.map.jl
+│   ├── utils.gitignore.jl
+│   └── utils.config.example.jl
 ├── test/
 │   └── runtests.jl
 └── notes/

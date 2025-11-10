@@ -7,6 +7,7 @@ function collect_paths(; cfg = SourceConcat.load_config(),
 
     base = get(cfg, "__config.base", pwd())
     roots = get(cfg, "root.paths", String[])
+    use_gitignore = get(cfg, "use.gtignore", false)
     include_globs = get(cfg, "include.files", String[])
     include_globs = Glob.FilenameMatch.(include_globs)
     exclude_globs = get(cfg, "exclude.files", String[])
@@ -23,7 +24,16 @@ function collect_paths(; cfg = SourceConcat.load_config(),
     unique!(roots)
     for root in roots
         log && @info "Walking root." root=root
+
+        
         for (dir, _, files) in walkdir(root)
+            
+            # gitignore
+            gitignore_patterns = nothing
+            if use_gitignore
+                gitignore_patterns = load_gitignore(dir) 
+            end
+                
             for file in files
                 path = joinpath(dir, file)
                 rel  = relpath(path, root)
@@ -33,6 +43,14 @@ function collect_paths(; cfg = SourceConcat.load_config(),
                     exc_by_exclude += 1
                     log_detail && @info "Excluding" rel=rel reason="match exclude.files"
                     continue
+                end
+                
+                if !isnothing(gitignore_patterns)
+                    if _match_anyglob(rel, gitignore_patterns)
+                        exc_by_exclude += 1
+                        log_detail && @info "Excluding" rel=rel reason="match gitignore"
+                        continue
+                    end
                 end
 
                 # Include logic

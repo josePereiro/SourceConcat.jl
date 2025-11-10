@@ -5,6 +5,7 @@ using Glob
 using Dates
 using Printf
 using InteractiveUtils
+using Unicode
 
 #! include .
 include("base.collect.paths.jl")
@@ -14,6 +15,7 @@ include("base.configfile.jl")
 include("utils.clipboard.file.jl")
 include("utils.config.validate.jl")
 include("utils.jl")
+include("utils.jsonc.jl")
 include("utils.lang.map.jl")
 
 end

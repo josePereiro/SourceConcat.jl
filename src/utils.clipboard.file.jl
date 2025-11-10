@@ -34,7 +34,11 @@ function _clipboard_file_macos(path::AbstractString)
     # Escape embedded double-quotes for AppleScript
     p = replace(abspath(path), "\"" => "\\\"")
     cmd = `osascript -e "set the clipboard to POSIX file \"$(p)\""`
-    run(cmd)
+    # For some reason this command fail to do anything...
+    # just repeating it a few times
+    for _ in 1:3
+        run(cmd)
+    end
 end
 
 # ---------------- Windows ----------------

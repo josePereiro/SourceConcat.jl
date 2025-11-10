@@ -1,19 +1,11 @@
 # ------------------------------------------------------------------
-# Utility: read JSON allowing comments and trailing commas
-# ------------------------------------------------------------------
-function _read_json_with_comments(path::AbstractString)
-    text = read(path, String)
-    # # Remove // and /* */ comments (non-greedy for block comments)
-    text = replace(text, r"\s*//.*$" => "")
-    return JSON3.read(text, Dict{String, Any})
-end
-
-# ------------------------------------------------------------------
 # Public API
 # ------------------------------------------------------------------
 
 CONFIG_FILE_NAMES = [
+    "SourceConcat.jsonc", 
     "SourceConcat.json", 
+    "SrcConcat.jsonc", 
     "SrcConcat.json", 
 ]
 
@@ -36,12 +28,8 @@ function load_config(;
         path = joinpath(base, name)
         isfile(path) || continue
         _found = true
-        _raw = _read_json_with_comments(path)
-        for (k, v) in _raw
-            _cfg[string(k)] = v
-        end
-        
         # Meta
+        _read_json_with_comments!(_cfg, path)
         _cfg["__config.name"] = name
     end
 

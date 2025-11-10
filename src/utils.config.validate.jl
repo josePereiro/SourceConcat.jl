@@ -47,7 +47,7 @@ function _validate_config(cfg; log::Bool=true)
         log && @warn "Both include.files and exclude.files are empty — all files will be included."
     end
     if length(unique(roots)) != length(roots)
-        log && @warn "Duplicate entries found in root.paths."
+        log && @warn "Duplicate entries found in root.paths config."
     end
 
     if log

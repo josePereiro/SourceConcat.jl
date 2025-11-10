@@ -19,8 +19,9 @@ function collect_paths(; cfg = SourceConcat.load_config(),
 
     log && @info "Scanning roots for files." roots=length(roots) base=base include_patterns=length(include_globs) exclude_patterns=length(exclude_globs)
 
+    roots = _canonicalize.(roots; base)
+    unique!(roots)
     for root in roots
-        root = _canonicalize(root; base)
         log && @info "Walking root." root=root
         for (dir, _, files) in walkdir(root)
             for file in files

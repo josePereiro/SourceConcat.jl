@@ -1,6 +1,7 @@
 {
     "root.paths": [
-        "."
+        ".", 
+        // "."
     ],  
 
     "output.path": "~/Documents/context.md",
